@@ -1,0 +1,9 @@
+venv/
+.venv/
+__pycache__/
+.ipynb_checkpoints/
+*.pyc
+node_modules/
+data/raw/
+logs/
+Task-01-Music-Recommendation-System/MusicRecommendation/data/raw/

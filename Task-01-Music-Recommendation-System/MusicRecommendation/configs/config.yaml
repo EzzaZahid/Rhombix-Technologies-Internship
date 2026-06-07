@@ -1,0 +1,69 @@
+data:
+  raw_path: data/raw/play_events.csv
+  processed_path: data/processed/features.parquet
+  sample_path: data/sample/play_events_sample.csv
+  n_synthetic_users: 500
+  n_synthetic_songs: 2000
+  n_synthetic_events: 100000
+  replay_window_days: 30        # Label: replayed within this many days
+
+split:
+  test_size: 0.20               # Fraction of data held out for test
+  strategy: time                # "time" (recommended) or "random"
+
+features:
+  user:
+    - user_total_plays
+    - user_replay_rate
+    - user_unique_songs
+    - user_avg_daily_plays
+    - user_skip_rate
+    - user_genre_diversity
+  song:
+    - song_total_plays
+    - song_global_replay_rate
+    - song_unique_listeners
+    - song_avg_completion
+    - song_energy
+    - song_valence
+    - song_tempo
+    - song_danceability
+    - song_acousticness
+  interaction:
+    - times_played_before
+    - days_since_first_play
+    - user_song_completion_avg
+    - same_artist_plays
+    - same_genre_plays
+  temporal:
+    - hour_of_day
+    - day_of_week
+    - is_weekend
+
+model:
+  type: lgbm                    # "lgbm" or "baseline"
+  save_path: models/lgbm_model.pkl
+
+  lgbm:
+    n_estimators: 500
+    learning_rate: 0.05
+    num_leaves: 63
+    max_depth: -1
+    min_child_samples: 20
+    subsample: 0.8
+    colsample_bytree: 0.8
+    class_weight: balanced
+    early_stopping_rounds: 50
+    verbose: -1
+
+  baseline:
+    max_iter: 1000
+    class_weight: balanced
+
+evaluation:
+  top_k: [5, 10, 20]           # K values for Precision@K, Recall@K, NDCG@K
+  primary_metric: auc_roc
+
+logging:
+  level: INFO
+  log_file: logs/training.log
